@@ -5,6 +5,7 @@
     <div class="center">
       <date-picker :input-class="'form-control'" class="form-group center" :value="state.date"></date-picker>
     </div>
+    <dropzone ref="dropzone" id="dropzone" :options="dropzoneOptions" :useCustomSlot="true" class="center">Drop files here</dropzone>
   </div>
 </template>
 
@@ -37,6 +38,11 @@ export default {
       progress: 'Not started',
       state: {
         date: new Date(2019, 1,  16)
+      },
+      dropzoneOptions: {
+          url: 'http://localhost:8080/files',
+          thumbnailWidth: 100,
+          method: 'post'
       }
     }
   }
@@ -56,6 +62,7 @@ export default {
 div.center {
   width: 300px;
   margin: auto;
+  margin-bottom: 10px;
 }
 
 </style>
