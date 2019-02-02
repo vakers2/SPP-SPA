@@ -2,8 +2,8 @@
   <div class="home">
     <app-select v-model="task" class="inline" :options="tasks"></app-select>
     <app-select v-model="progress" class="inline" :options="statuses"></app-select>
-    <div style="width: 320px; margin: auto">
-      <date-picker class="form-input center" :value="state.date"></date-picker>
+    <div class="center">
+      <date-picker :input-class="'form-control'" class="form-group center" :value="state.date"></date-picker>
     </div>
   </div>
 </template>
@@ -16,6 +16,9 @@ import DatePicker from "vuejs-datepicker";
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+import Dropzone from 'vue2-dropzone'
+import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+
 const tasks = ['Sleep', 'Do labs', 'Watch anime']
 const statuses = ['Not started', 'In progress', 'Finished']
 
@@ -23,7 +26,8 @@ export default {
   name: "home",
   components: {
     AppSelect,
-    DatePicker
+    DatePicker,
+    Dropzone
   },
   data() {
     return {
@@ -32,7 +36,7 @@ export default {
       task: 'Sleep',
       progress: 'Not started',
       state: {
-        date: new Date(2016, 9,  16)
+        date: new Date(2019, 1,  16)
       }
     }
   }
@@ -47,6 +51,11 @@ export default {
 
 .center {
   text-align: inherit;
+}
+
+div.center {
+  width: 300px;
+  margin: auto;
 }
 
 </style>
