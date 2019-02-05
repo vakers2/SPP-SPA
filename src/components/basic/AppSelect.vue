@@ -9,7 +9,6 @@
 <script>
 
 export default {
-  name: "select",
   props: {
       options: Array
   },
@@ -23,7 +22,7 @@ export default {
 
 <style>
 .form-select {
-	width: 200px !important;
-	margin-bottom: 10px;
+	width: 300px !important;
+	margin-bottom: 5px;
 }
 </style>
