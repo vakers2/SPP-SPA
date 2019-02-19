@@ -2,6 +2,8 @@
     <div class="card-example">
         <div class="card">
             <div class="card-block">
+                <i @click="deleteCard()" class="fas fa-times delete-icon"></i>
+                <i @click="edit = !edit" class="fas fa-edit edit-icon"></i>
                 <h4 class="card-title">
                     {{task.taskName}}
                 </h4>
@@ -10,6 +12,12 @@
                 </p>
             </div>
             <ul class="list-group list-group-flush">
+                <li v-if="!edit" class="list-group-item">
+                    {{task.progress}}
+                </li>
+                <li v-if="edit" class="list-group-item">
+                    <app-select class="select" :options="statuses" v-model="progress"></app-select>
+                </li>
                 <li v-for="(file, index) in task.files" :key="index" class="list-group-item">
                     <a :href="file">{{file.split('/').pop()}}</a>
                 </li>
@@ -22,24 +30,48 @@
 </template>
 
 <script>
+import AppSelect from "@/components/basic/AppSelect.vue";
+const statuses = ['Not started', 'In progress', 'Finished']
 
 export default {
+  components: {
+    AppSelect
+  },
   props: {
       task: Object
   },
   methods: {
     handleChange: function(event) {
-      this.$emit("input", event.target.value);
+      this.$emit("input", event.target.value)
     },
     getDate: function(date) {
         let dateObj = new Date(date)
         return dateObj.toLocaleDateString()
+    },
+    deleteCard: function() {
+        this.$emit("delete")
+    }
+  },
+  watch: {
+      progress: function() {
+        this.$emit('input', this.progress)
+        this.$emit('edit')
+      }
+  },
+  data() {
+    return {
+      edit: false,
+      progress: '',
+      statuses
     }
   }
 };
 </script>
 
 <style scoped>
+.card {
+    width: 300px;
+}
 
 .container {
   margin-top: 30px;
@@ -62,7 +94,29 @@ export default {
     padding: 5px 5px 5px 5px;
 }
 
-/* .list-group-flush .list-group-item {
+.card-title {
+    text-align: center;
+}
+
+.list-group-flush .list-group-item {
     border-left: solid 1px rgba(0, 0, 0, 0.125);
-} */
+}
+
+.delete-icon {
+    color: red;
+    display: absolute;
+    float: right;
+    cursor: pointer;
+}
+
+.edit-icon {
+    display: absolute;
+    float: right;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.select select {
+    width: 200px !important;
+}
 </style>

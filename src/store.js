@@ -4,7 +4,15 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
-  mutations: {},
+  state: {
+    login: "",
+    token: ""
+  },
+  mutations: {
+    logIn (state, login, token) {
+      state.login = login
+      state.token = token
+    }
+  },
   actions: {}
 });
