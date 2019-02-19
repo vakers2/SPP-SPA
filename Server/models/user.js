@@ -8,13 +8,18 @@ const UserSchema = new Schema({
     username: {
         type: String,
         trim: true,
+        index: true,
+        unique: true,
         required: true
     },
     password: {
         type: String,
         trim: true,
         required: true
-    }
+    },
+    cards: [
+        {type: Schema.Types.ObjectId, ref: 'Card'}
+    ]
 })
 
 UserSchema.pre("save", function(next) {

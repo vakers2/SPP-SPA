@@ -4,6 +4,8 @@ const express = require('express')
 const routes = require('./routes/index.js')
 const fs = require('fs')
 const formidable = require('formidable')
+const userController = require('./controllers/users')
+const mongoose = require('./config/database')
 
 require('dotenv').config()
 
@@ -51,6 +53,9 @@ function addToJsonFile(jsonData){
         }
     })
 }
+
+app.post('/signup', userController.create)
+app.post('/login', userController.authenticate)
 
 app.get('/', (request, response) => {
     response.render('pages/index', {data: readJsonFileSync()})

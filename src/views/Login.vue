@@ -8,10 +8,10 @@
                     <h4 v-if="!login">Register</h4>
                 </v-card-title>
                 <v-form>
-                <v-text-field prepend-icon="person" name="Username" label="Username"></v-text-field>
-                <v-text-field prepend-icon="lock" name="Password" label="Password" type="password"></v-text-field>
+                <v-text-field v-model="username" prepend-icon="person" name="Username" label="Username"></v-text-field>
+                <v-text-field v-model="password" prepend-icon="lock" name="Password" label="Password" type="password"></v-text-field>
                 <v-card-actions>
-                    <v-btn style="background-color: #007bff;" class="btn btn-primary" large block>{{LoginLabel}}</v-btn>
+                    <v-btn @click="signup()" style="background-color: #007bff;" class="btn btn-primary" large block>{{LoginLabel}}</v-btn>
                 </v-card-actions>
                 </v-form>
                 </v-card>
@@ -41,9 +41,29 @@ export default {
   props: {
     login: Boolean
   },
+  methods: {
+      signup: function() {
+          let username = this.username
+          let password = this.password
+          if (this.login){
+            axios.post('http://localhost:3000/login', {username, password}, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+          } else {
+            axios.post('http://localhost:3000/signup', {username, password}, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+          }
+      }
+  },
   data() {
     return {
-      
+      username: '',
+      password: ''
     }
   }
 };
