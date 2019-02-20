@@ -35,6 +35,8 @@ import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 
 import axios from 'axios'
 
+import { mapState } from "vuex";
+
 axios.defaults.baseURL = '/'
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
@@ -49,12 +51,25 @@ export default {
     Dropzone,
     bDropdown
   },
-  created: function() {
-    axios.get('http://localhost:3000/getTasks')
+  mounted: function() {
+    axios.defaults.headers.common['x-access-token'] = this.token
+    axios.get('http://localhost:3000/task/getTasks?username=' + this.login)
       .then(response => {
-        this.tasks = this.allTasks = response.data
+        if (response.data.message != "No cards") {
+          this.tasks = this.allTasks = response.data
+        }
+      }).catch((err) => {
+        this.$store.commit("signOut")
+        this.$router.push({ path: '/login' })
       })
   },
+  computed: mapState(["login", "token"]),
+  // created: function() {
+  //   axios.get('http://localhost:3000/getTasks')
+  //     .then(response => {
+  //       this.tasks = this.allTasks = response.data
+  //     })
+  // },
   methods: {
     validate() {
       return this.newTask != ''
@@ -66,9 +81,13 @@ export default {
         task.date = this.state.date
         task.description = this.description
         task.progress = this.progress
+        if (task.progress == '') {
+          task.progress = 'Not started'
+        }
         task.files = this.files
+        task.username = this.login
         this.tasks.push(task)
-        axios.post('http://localhost:3000/task', this.tasks, {
+        axios.post('http://localhost:3000/task/createTask', this.tasks, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -96,8 +115,10 @@ export default {
         ref.style.display = "block"}
     },
     deleteCard(id){
+      let login = this.login
       this.tasks.splice(id, 1);
-      axios.post('http://localhost:3000/task', this.tasks, {
+      let data = this.tasks.length == 0 ? { login } : this.tasks
+      axios.post('http://localhost:3000/task/createTask', data, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -106,7 +127,7 @@ export default {
     edit(id) {
       this.allTasks[id].progress = this.editStatus;
       this.tasks = this.allTasks;
-      axios.post('http://localhost:3000/task', this.tasks, {
+      axios.post('http://localhost:3000/task/createTask', this.tasks, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -136,7 +157,7 @@ export default {
         date: new Date(2019, 1, 16)
       },
       dropzoneOptions: {
-          url: 'http://localhost:3000/files',
+          url: 'http://localhost:3000/task/files?username=' + this.login,
           thumbnailWidth: 100,
           method: 'post'
       }

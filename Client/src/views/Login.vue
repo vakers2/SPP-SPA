@@ -34,9 +34,17 @@ export default {
   components: {
   },
   computed: {
-      LoginLabel() {
-          return this.login ? "Log in" : "Sign up"
-      }
+    LoginLabel() {
+        return this.login ? "Log in" : "Sign up"
+    },
+    getUrl() {
+        return this.$route.path;
+    },
+  },
+  watch: {
+    getUrl: function() {
+      Object.assign(this.$data, this.$options.data.apply(this));
+    }
   },
   props: {
     login: Boolean
@@ -50,12 +58,20 @@ export default {
                 headers: {
                     'Content-Type': 'application/json'
                 }
+            }).then(res => {
+                if (res.data.status == 'success') {
+                    let token = res.data.token
+                    this.$store.commit('logIn', {username, token})
+                    this.$router.push({ path: '/board' })
+                }
             })
           } else {
             axios.post('http://localhost:3000/signup', {username, password}, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
+            }).then(res => {
+                
             })
           }
       }

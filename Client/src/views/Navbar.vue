@@ -1,7 +1,7 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="dark" variant="info">
-      <b-navbar-brand href="#">NavBar</b-navbar-brand>
+    <b-navbar toggleable="lg" type="light" variant="info">
+      <b-navbar-brand href="#">SPP</b-navbar-brand>
 
       <b-navbar-toggle target="nav_collapse"/>
 
@@ -17,7 +17,7 @@
             <template slot="button-content">
               <em>{{login}}</em>
             </template>
-            <b-dropdown-item href="#">Signout</b-dropdown-item>
+            <b-dropdown-item @click="signOut()" href="#">Signout</b-dropdown-item>
           </b-nav-item-dropdown>
           <b-navbar-nav v-if="login == ''" id="nav">
             <router-link style="margin-right: 10px;" to="/login">Login</router-link>
@@ -42,6 +42,12 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 export default {
   name: "navbar",
   components: {},
+  methods: {
+    signOut() {
+      this.$store.commit("signOut")
+      this.$router.push({ path: '/login' })
+    }
+  },
   computed: mapState(["login"]),
   data() {
     return {};
