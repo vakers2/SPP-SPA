@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="light" variant="info">
+    <b-navbar toggleable="lg" type="dark" variant="primary">
       <b-navbar-brand href="#">SPP</b-navbar-brand>
 
       <b-navbar-toggle target="nav_collapse"/>
@@ -15,7 +15,7 @@
           <b-nav-item-dropdown v-if="login != ''" right>
             <!-- Using button-content slot -->
             <template slot="button-content">
-              <em>{{login}}</em>
+              <em style="color:rgba(255, 255, 255, 0.8);">{{login}}</em>
             </template>
             <b-dropdown-item @click="signOut()" href="#">Signout</b-dropdown-item>
           </b-nav-item-dropdown>

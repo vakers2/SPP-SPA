@@ -51,17 +51,24 @@ export default {
     Dropzone,
     bDropdown
   },
+  beforeMount() {
+    if (this.login == "") {
+      this.$router.push({ path: '/login' })
+    }
+  },
   mounted: function() {
-    axios.defaults.headers.common['x-access-token'] = this.token
-    axios.get('http://localhost:3000/task/getTasks?username=' + this.login)
-      .then(response => {
-        if (response.data.message != "No cards") {
-          this.tasks = this.allTasks = response.data
-        }
-      }).catch((err) => {
-        this.$store.commit("signOut")
-        this.$router.push({ path: '/login' })
-      })
+    if (this.login != "") {
+      axios.defaults.headers.common['x-access-token'] = this.token
+      axios.get('http://localhost:3000/task/getTasks?username=' + this.login)
+        .then(response => {
+          if (response.data.message != "No cards") {
+            this.tasks = this.allTasks = response.data
+          }
+        }).catch((err) => {
+          this.$store.commit("signOut")
+          this.$router.push({ path: '/login' })
+        })
+      }
   },
   computed: mapState(["login", "token"]),
   // created: function() {
@@ -97,7 +104,7 @@ export default {
             this.newTask = ''
             this.progress = ''
             this.description = ''
-            this.state.date = new Date(2019, 1, 16)
+            this.state.date = new Date(2019, 1, 20)
             this.$refs.dropzone.removeAllFiles()
           })
       }
@@ -210,7 +217,6 @@ div.center {
 
 .card-container {
   display: inline-flex;
-  margin-left: 50px !important;
 }
 
 </style>

@@ -46,15 +46,15 @@ app.use(function(req, res, next) {
 
 function validateUser(req, res, next) {
     jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), (err, decoded) => {
-        if (err) {
-            if (req.method == 'OPTIONS') {
-                next()
-            } else {
-                res.status(401).send({status: 'error', message: err.message})
-            }
-        } else {
-            req.body.userId = decoded.id
+        if (req.method == 'OPTIONS') {
             next()
+        } else {
+            if (err) {
+                res.status(401).send({status: 'error', message: err.message})
+            } else {
+                req.body.userId = decoded.id
+                next()
+            }
         }
     })
 }

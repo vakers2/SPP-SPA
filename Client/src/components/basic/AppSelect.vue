@@ -26,8 +26,4 @@ export default {
 </script>
 
 <style>
-.form-select {
-	width: 200px;
-	margin-bottom: 5px;
-}
 </style>
