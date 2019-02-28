@@ -58,25 +58,21 @@ export default {
   },
   mounted: function() {
     if (this.login != "") {
-      axios.defaults.headers.common['x-access-token'] = this.token
-      axios.get('http://localhost:3000/task/getTasks?username=' + this.login)
-        .then(response => {
-          if (response.data.message != "No cards") {
-            this.tasks = this.allTasks = response.data
-          }
-        }).catch((err) => {
-          this.$store.commit("signOut")
-          this.$router.push({ path: '/login' })
-        })
-      }
+      this.$socket.emit('get_cards', this.login)
+    } else {
+      this.$store.commit("signOut")
+      this.$router.push({ path: '/login' })
+    }
   },
   computed: mapState(["login", "token"]),
-  // created: function() {
-  //   axios.get('http://localhost:3000/getTasks')
-  //     .then(response => {
-  //       this.tasks = this.allTasks = response.data
-  //     })
-  // },
+  sockets: {
+    connect: function () {
+      console.log('socket connected')
+    },
+    cards: function (data) {
+      this.allTasks = this.tasks = data
+    }
+  },
   methods: {
     validate() {
       return this.newTask != ''
@@ -94,19 +90,14 @@ export default {
         task.files = this.files
         task.username = this.login
         this.tasks.push(task)
-        axios.post('http://localhost:3000/task/createTask', this.tasks, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-          .then(response => {
-            this.files = []
-            this.newTask = ''
-            this.progress = ''
-            this.description = ''
-            this.state.date = new Date(2019, 1, 20)
-            this.$refs.dropzone.removeAllFiles()
-          })
+        this.$socket.emit('post_cards', this.tasks)
+
+        this.files = []
+        this.newTask = ''
+        this.progress = ''
+        this.description = ''
+        this.state.date = new Date(2019, 1, 20)
+        this.$refs.dropzone.removeAllFiles()
       }
     },
     getFile(file, response) {
@@ -125,20 +116,12 @@ export default {
       let login = this.login
       this.tasks.splice(id, 1);
       let data = this.tasks.length == 0 ? { login } : this.tasks
-      axios.post('http://localhost:3000/task/createTask', data, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+      this.$socket.emit('post_cards', this.tasks)
     },
     edit(id) {
       this.allTasks[id].progress = this.editStatus;
       this.tasks = this.allTasks;
-      axios.post('http://localhost:3000/task/createTask', this.tasks, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+      this.$socket.emit('post_cards', this.tasks)
     }
   },
   watch: {

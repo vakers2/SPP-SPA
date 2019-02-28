@@ -5,13 +5,15 @@
   "main": "index.js",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "dropzone": "^5.5.1",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "formidable": "^1.2.1",
     "jsonwebtoken": "^8.4.0",
-    "mongoose": "^5.4.13"
+    "mongoose": "^5.4.13",
+    "socket.io": "^2.2.0"
   },
   "devDependencies": {
     "connect-livereload": "^0.6.1",

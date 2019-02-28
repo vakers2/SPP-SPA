@@ -8,15 +8,19 @@ const formidable = require('formidable')
 const userController = require('./controllers/users')
 const jwt = require('jsonwebtoken')
 const mongoose = require('./config/database')
+var cors = require('cors')
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error'))
 
 require('dotenv').config()
 
 const app = express()
+const server = require('http').createServer(app)
+const io = require('socket.io')(server)
 const port = process.env.PORT || 3000
 const liveReloadPort = 35729
 
+app.use(cors())
 app.set('view engine', 'ejs')
 app.set('secretKey', 'asswecan')
 
@@ -37,7 +41,7 @@ app.use(require('connect-livereload')({
 }))
 
 app.use(function(req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
     res.setHeader('Access-Control-Allow-Credentials', 'true')
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT')
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, cache-control, x-access-token, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers')
@@ -102,13 +106,6 @@ app.get('/', (request, response) => {
     response.render('pages/index', {data: readJsonFileSync()})
 })
 
-app.get('/task/getTasks', (request, response) => {
-    response.header('Cache-Control', 'no-cache, no-store, must-revalidate')
-    response.header('Pragma', 'no-cache')
-    response.header('Expires', 0)
-    response.send(readJsonFileSync(request.query.username))
-})
-
 app.post('/task/files', (request, response) => {
     var form = new formidable.IncomingForm()
     form.parse(request, (err, fields, files) => {
@@ -120,14 +117,19 @@ app.post('/task/files', (request, response) => {
     })
 })
 
-app.post('/task/createTask', (request, response) => {
-    addToJsonFile(request.body)
-    response.sendStatus(200)
+io.on('connection', (client) => {
+    client.on('get_cards', (user) => {
+        client.emit('cards', readJsonFileSync(user) || [])
+    })
+
+    client.on('post_cards', (cards) => {
+        addToJsonFile(cards)
+    })
 })
 
 routes(app)
 
-app.listen(port, () => {
+server.listen(port, () => {
     // eslint-disable-next-line no-console
     console.log('Express server listening on http://localhost:%d in %s mode.', port, app.get('env'))
 })
