@@ -71,12 +71,6 @@ export default {
       }
   },
   computed: mapState(["login", "token"]),
-  // created: function() {
-  //   axios.get('http://localhost:3000/getTasks')
-  //     .then(response => {
-  //       this.tasks = this.allTasks = response.data
-  //     })
-  // },
   methods: {
     validate() {
       return this.newTask != ''

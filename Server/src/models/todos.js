@@ -3,7 +3,7 @@ const moment = require('moment')
 
 const Schema = mongoose.Schema
 
-const CardSchema = new Schema({
+const TodoSchema = new Schema({
   name: {
     type: String,
     trim: true,
@@ -14,7 +14,7 @@ const CardSchema = new Schema({
     trim: true,
     maxlength: 250
   },
-  status: {
+  progress: {
     type: String,
     trim: true,
     required: true,
@@ -24,7 +24,7 @@ const CardSchema = new Schema({
       'Finished'
     ]
   },
-  createdAt: Date
+  date: Date
 })
 
 TodoSchema.pre('save', function (next) {
@@ -32,4 +32,4 @@ TodoSchema.pre('save', function (next) {
   next()
 })
 
-module.exports = mongoose.model('Card', CardSchema)
+module.exports = mongoose.model('Todo', TodoSchema)
