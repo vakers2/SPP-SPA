@@ -3,9 +3,7 @@ type Todo {
   name: String!
   description: String
   status: String!
-  color: String!
-  createdAt: String!
-  dueTo: String
+  date: String!
 }
 
 input CardInput {
@@ -13,9 +11,7 @@ input CardInput {
   name: String!
   description: String
   status: String!
-  color: String!
-  createdAt: String
-  dueTo: String
+  date: String
 }
 
 type Query {

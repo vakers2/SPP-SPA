@@ -18,15 +18,15 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use('/users', users)
 
-app.use((req, res, next) => {
-  jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), (err, decoded) => {
-    if (err) {
-      res.status(401).send({ status: 'error', message: err.message })
-    } else {
-      next()
-    }
-  })
-})
+// app.use((req, res, next) => {
+//   jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), (err, decoded) => {
+//     if (err) {
+//       res.status(401).send({ status: 'error', message: err.message })
+//     } else {
+//       next()
+//     }
+//   })
+// })
 
 module.exports = {
   server: {

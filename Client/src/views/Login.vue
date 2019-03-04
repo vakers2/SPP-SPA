@@ -71,7 +71,7 @@ export default {
         let password = this.password;
         if (this.login) {
           axios.post(
-              "http://localhost:3000/login",
+              "http://localhost:4000/users/login",
               { username, password },
               {
                 headers: {
@@ -82,7 +82,8 @@ export default {
             .then(res => {
               if (res.data.status == "success") {
                 let token = res.data.token;
-                this.$store.commit("logIn", { username, token });
+                let id = res.data.userId;
+                this.$store.commit("logIn", { username, token, id });
                 this.$router.push({ path: "/board" });
               }
             })
@@ -91,7 +92,7 @@ export default {
             });
         } else {
           axios.post(
-              "http://localhost:3000/signup",
+              "http://localhost:4000/users/signup",
               { username, password },
               {
                 headers: {
@@ -101,7 +102,7 @@ export default {
             )
             .then(res => {
               axios.post(
-                  "http://localhost:3000/login",
+                  "http://localhost:4000/users/login",
                   { username, password },
                   {
                     headers: {
@@ -112,7 +113,8 @@ export default {
                 .then(res => {
                   if (res.data.status == "success") {
                     let token = res.data.token;
-                    this.$store.commit("logIn", { username, token });
+                    let id = res.data.userId;
+                    this.$store.commit("logIn", { username, token, id });
                     this.$router.push({ path: "/board" });
                   }
                 })

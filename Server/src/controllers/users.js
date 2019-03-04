@@ -16,7 +16,7 @@ module.exports = {
   },
   authenticate: (req, res, next) => {
     if (!req.body || !req.body.username || !req.body.password) {
-      res.status(403).send({ status: 'error', msg: 'No valid email/password supplied' })
+      res.status(403).send({ status: 'error', msg: 'No valid login/password supplied' })
     } else {
       userModel.findOne({ username: req.body.username }, (err, userInfo) => {
         if (err) {
@@ -26,7 +26,7 @@ module.exports = {
             const token = jwt.sign({ id: userInfo._id }, req.app.get('secretKey'), { expiresIn: '24h' })
             res.status(200).send({ status: 'success', msg: 'User logged in', token: token, userId: userInfo._id })
           } else {
-            res.status(403).send({ status: 'error', msg: 'Invalid email/password' })
+            res.status(403).send({ status: 'error', msg: 'Invalid login/password' })
           }
         }
       })

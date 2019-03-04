@@ -5,7 +5,7 @@
                 <i @click="deleteCard()" class="fas fa-times delete-icon"></i>
                 <i @click="edit = !edit" class="fas fa-edit edit-icon"></i>
                 <h4 class="card-title">
-                    {{task.taskName}}
+                    {{task.name || task.taskName}}
                 </h4>
                 <p class="card-text">
                     {{task.description}}
@@ -13,7 +13,7 @@
             </div>
             <ul class="list-group list-group-flush">
                 <li v-if="!edit" class="list-group-item">
-                    {{task.progress}}
+                    {{task.status || task.progress}}
                 </li>
                 <li v-if="edit" class="list-group-item">
                     <app-select class="select" :options="statuses" v-model="progress"></app-select>

@@ -59,10 +59,23 @@ export default {
   mounted: function() {
     if (this.login != "") {
       axios.defaults.headers.common['x-access-token'] = this.token
-      axios.get('http://localhost:3000/task/getTasks?username=' + this.login)
+      axios.post('http://localhost:4000/graphql', {
+          query: `query ($userId: String!) {
+                    getCards(userId:$userId) {
+                      _id
+                      name
+                      description
+                      status
+                      date
+                    }
+                  }`,
+          variables: {
+            "userId": this.id
+          }
+        })
         .then(response => {
           if (response.data.message != "No cards") {
-            this.tasks = this.allTasks = response.data
+            this.tasks = this.allTasks = response.data.data.getCards
           }
         }).catch((err) => {
           this.$store.commit("signOut")
@@ -70,7 +83,7 @@ export default {
         })
       }
   },
-  computed: mapState(["login", "token"]),
+  computed: mapState(["login", "token", "id"]),
   methods: {
     validate() {
       return this.newTask != ''
@@ -88,9 +101,22 @@ export default {
         task.files = this.files
         task.username = this.login
         this.tasks.push(task)
-        axios.post('http://localhost:3000/task/createTask', this.tasks, {
-          headers: {
-            'Content-Type': 'application/json'
+        axios.post('http://localhost:4000/graphql', {
+          query: `mutation ($userId: String!, $name: String!, $description: String, $status: String!, $date: String) {
+                  createCard(input: {userId: $userId, name: $name, description: $description, status: $status, date: $date}) {
+                    _id
+                    name
+                    description
+                    status
+                    date
+                  }
+                }`,
+          variables: {
+            "userId": this.id,
+            "name": this.newTask,
+            "status": this.progress,
+            "description": this.description,
+            "date": this.state.date
           }
         })
           .then(response => {
@@ -119,16 +145,14 @@ export default {
       let login = this.login
       this.tasks.splice(id, 1);
       let data = this.tasks.length == 0 ? { login } : this.tasks
-      axios.post('http://localhost:3000/task/createTask', data, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      axios.post('http://localhost:4000/graphql', {
+
       })
     },
     edit(id) {
       this.allTasks[id].progress = this.editStatus;
       this.tasks = this.allTasks;
-      axios.post('http://localhost:3000/task/createTask', this.tasks, {
+      axios.post('http://localhost:4000/grapghql', {
         headers: {
           'Content-Type': 'application/json'
         }

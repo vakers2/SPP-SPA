@@ -14,7 +14,7 @@ const TodoSchema = new Schema({
     trim: true,
     maxlength: 250
   },
-  progress: {
+  status: {
     type: String,
     trim: true,
     required: true,
