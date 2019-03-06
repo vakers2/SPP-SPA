@@ -25,8 +25,8 @@ async function createCard(_, args) {
 }
 
 async function updateCard(_, args) {
-  const { id, newProgress } = args
-  await todoModel.findByIdAndUpdate(id, { progress: newProgress }).exec()
+  const { id, newStatus } = args
+  await todoModel.findByIdAndUpdate(id, { status: newStatus }).exec()
 }
 
 async function removeCard(_, args) {

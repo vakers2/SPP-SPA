@@ -433,10 +433,10 @@ async function createCard(_, args) {
 async function updateCard(_, args) {
   const {
     id,
-    newProgress
+    newStatus
   } = args;
   await todoModel.findByIdAndUpdate(id, {
-    progress: newProgress
+    status: newStatus
   }).exec();
 }
 

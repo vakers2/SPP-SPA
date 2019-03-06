@@ -49,13 +49,14 @@ export default {
         return dateObj.toLocaleDateString()
     },
     deleteCard: function() {
-        this.$emit("delete")
+        this.$emit("delete", this.task._id)
     }
   },
   watch: {
       progress: function() {
+        let id = this.task._id
         this.$emit('input', this.progress)
-        this.$emit('edit')
+        this.$emit('edit', id)
       }
   },
   data() {

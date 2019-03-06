@@ -15,7 +15,7 @@
       <input @click="sendTask" value="Submit" type="button" class="btn btn-primary placement"/>
     </div>
     <div class="container">
-      <app-card v-model="editStatus" @edit="edit(index)" @delete="deleteCard(index)" class="card-container" :task="task" v-for="(task, index) in tasks" :key="index"></app-card>
+      <app-card v-model="editStatus" @edit="edit" @delete="deleteCard" class="card-container" :task="task" v-for="(task, index) in tasks" :key="index"></app-card>
     </div>
   </div>
 </template>
@@ -100,7 +100,6 @@ export default {
         }
         task.files = this.files
         task.username = this.login
-        this.tasks.push(task)
         axios.post('http://localhost:4000/graphql', {
           query: `mutation ($userId: String!, $name: String!, $description: String, $status: String!, $date: String) {
                   createCard(input: {userId: $userId, name: $name, description: $description, status: $status, date: $date}) {
@@ -120,6 +119,7 @@ export default {
           }
         })
           .then(response => {
+            task._id = response.data.data.createCard._id
             this.files = []
             this.newTask = ''
             this.progress = ''
@@ -127,6 +127,7 @@ export default {
             this.state.date = new Date(2019, 1, 20)
             this.$refs.dropzone.removeAllFiles()
           })
+        this.tasks.push(task)
       }
     },
     getFile(file, response) {
@@ -141,20 +142,38 @@ export default {
         ref.style.opacity = "1"
         ref.style.display = "block"}
     },
-    deleteCard(id){
-      let login = this.login
-      this.tasks.splice(id, 1);
-      let data = this.tasks.length == 0 ? { login } : this.tasks
+    deleteCard(cardId){
       axios.post('http://localhost:4000/graphql', {
-
+        query: `mutation ($id: String!, $userId: String!) {
+                  removeCard(id: $id, userId: $userId)
+                }`,
+        variables: {
+          "id": cardId,
+          "userId": this.id
+        }
+      }).then(res => {
+        for(var i = this.tasks.length - 1; i >= 0; i--) {
+          if(this.tasks[i]._id === cardId) {
+            this.tasks.splice(i, 1);
+          }
+        }
       })
     },
     edit(id) {
-      this.allTasks[id].progress = this.editStatus;
+      for (var i = this.allTasks.length - 1; i >= 0; i--) {
+        if(this.allTasks[i]._id === id) {
+          this.allTasks[i].status = this.editStatus
+        }
+      }
       this.tasks = this.allTasks;
-      axios.post('http://localhost:4000/grapghql', {
-        headers: {
-          'Content-Type': 'application/json'
+      axios.post('http://localhost:4000/graphql', {
+        query: `mutation ($id: String!, $newStatus: String!) {
+                  updateCard(id: $id, newStatus: $newStatus)
+                }
+                `,
+        variables: {
+          "id": id,
+          "newStatus": this.editStatus
         }
       })
     }
